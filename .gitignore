@@ -154,6 +154,10 @@ dmypy.json
 # training files
 loggings/
 checkpoints/
+plots/
 
 # testing script
 example.py
+
+# ploting scipt
+illustrate.ipynb

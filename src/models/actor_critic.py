@@ -21,11 +21,12 @@ class ActorCritic(nn.Module):
                  # actor net MLP attributes:
                  num_mlp_layers_actor,
                  hidden_dim_actor,
-                 # actor net MLP attributes:
+                 # critic net MLP attributes:
                  num_mlp_layers_critic,
                  hidden_dim_critic,
+                 init_method,
                  # actor/critic/feature_extraction shared attribute
-                 device
+                 device,
                  ):
         super(ActorCritic, self).__init__()
         # job size for problems, no business with network
@@ -42,8 +43,8 @@ class ActorCritic(nn.Module):
                                         learn_eps=learn_eps,
                                         neighbor_pooling_type=neighbor_pooling_type,
                                         device=device).to(device)
-        self.actor = MLPActor(num_mlp_layers_actor, hidden_dim*2, hidden_dim_actor, 1).to(device)
-        self.critic = MLPCritic(num_mlp_layers_critic, hidden_dim, hidden_dim_critic, 1).to(device)
+        self.actor = MLPActor(num_mlp_layers_actor, hidden_dim*2, hidden_dim_actor, 1, init_method).to(device)
+        self.critic = MLPCritic(num_mlp_layers_critic, hidden_dim, hidden_dim_critic, 1, init_method).to(device)
 
     def forward(self,
                 x,

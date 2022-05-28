@@ -51,7 +51,7 @@ class MLP(nn.Module):
 
 
 class MLPActor(nn.Module):
-    def __init__(self, num_layers, input_dim, hidden_dim, output_dim):
+    def __init__(self, num_layers, input_dim, hidden_dim, output_dim, init_method):
         '''
             num_layers: number of layers in the neural networks (EXCLUDING the input layer). If num_layers=1, this reduces to linear model.
             input_dim: dimensionality of input features
@@ -74,18 +74,35 @@ class MLPActor(nn.Module):
             # Multi-layer model
             self.linear_or_not = False
             self.linears = torch.nn.ModuleList()
-            '''
-            self.batch_norms = torch.nn.ModuleList()
-            '''
 
             self.linears.append(nn.Linear(input_dim, hidden_dim))
-            for layer in range(num_layers - 2):
+            for _ in range(num_layers - 2):
                 self.linears.append(nn.Linear(hidden_dim, hidden_dim))
             self.linears.append(nn.Linear(hidden_dim, output_dim))
-            '''
-            for layer in range(num_layers - 1):
-                self.batch_norms.append(nn.BatchNorm1d((hidden_dim)))
-            '''
+
+            if init_method:
+                print(f'initialized with {init_method}')
+                last_layer_scale = 0.1
+                for idx, layer in enumerate(self.linears):
+                    if idx == self.num_layers - 1:
+                        if init_method == 'glorot_normal':
+                            nn.init.xavier_normal_(layer.weight, gain=last_layer_scale)
+                        elif init_method == 'glorot_uniform':
+                            nn.init.xavier_uniform_(layer.weight, gain=last_layer_scale)
+                        elif init_method == 'normalized_fan_in':
+                            layer.weight.data *= last_layer_scale / layer.weight.norm(dim=1, p=2, keepdim=True)
+                        else:
+                            raise AttributeError("unsupported initialization method")
+                    else:
+                        if init_method == 'glorot_normal':
+                            nn.init.xavier_normal_(layer.weight)
+                        elif init_method == 'glorot_uniform':
+                            nn.init.xavier_uniform_(layer.weight)
+                        elif init_method == 'normalized_fan_in':
+                            layer.weight.data *= 1 / layer.weight.norm(dim=1, p=2, keepdim=True)
+                        else:
+                            raise AttributeError("unsupported initialization method")
+                    layer.bias.data *= 0
 
     def forward(self, x):
         if self.linear_or_not:
@@ -104,7 +121,7 @@ class MLPActor(nn.Module):
 
 
 class MLPCritic(nn.Module):
-    def __init__(self, num_layers, input_dim, hidden_dim, output_dim):
+    def __init__(self, num_layers, input_dim, hidden_dim, output_dim, init_method):
         '''
             num_layers: number of layers in the neural networks (EXCLUDING the input layer). If num_layers=1, this reduces to linear model.
             input_dim: dimensionality of input features
@@ -127,18 +144,34 @@ class MLPCritic(nn.Module):
             # Multi-layer model
             self.linear_or_not = False
             self.linears = torch.nn.ModuleList()
-            '''
-            self.batch_norms = torch.nn.ModuleList()
-            '''
 
             self.linears.append(nn.Linear(input_dim, hidden_dim))
-            for layer in range(num_layers - 2):
+            for _ in range(num_layers - 2):
                 self.linears.append(nn.Linear(hidden_dim, hidden_dim))
             self.linears.append(nn.Linear(hidden_dim, output_dim))
-            '''
-            for layer in range(num_layers - 1):
-                self.batch_norms.append(nn.BatchNorm1d((hidden_dim)))
-            '''
+            
+            if init_method:
+                last_layer_scale = 0.1
+                for idx, layer in enumerate(self.linears):
+                    if idx == self.num_layers - 1:
+                        if init_method == 'glorot_normal':
+                            nn.init.xavier_normal_(layer.weight, gain=last_layer_scale)
+                        elif init_method == 'glorot_uniform':
+                            nn.init.xavier_uniform_(layer.weight, gain=last_layer_scale)
+                        elif init_method == 'normalized_fan_in':
+                            layer.weight.data *= last_layer_scale / layer.weight.norm(dim=1, p=2, keepdim=True)
+                        else:
+                            raise AttributeError("unsupported initialization method")
+                    else:
+                        if init_method == 'glorot_normal':
+                            nn.init.xavier_normal_(layer.weight)
+                        elif init_method == 'glorot_uniform':
+                            nn.init.xavier_uniform_(layer.weight)
+                        elif init_method == 'normalized_fan_in':
+                            layer.weight.data *= 1 / layer.weight.norm(dim=1, p=2, keepdim=True)
+                        else:
+                            raise AttributeError("unsupported initialization method")
+                    layer.bias.data *= 0
 
     def forward(self, x):
         if self.linear_or_not:

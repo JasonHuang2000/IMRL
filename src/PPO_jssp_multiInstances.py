@@ -9,7 +9,9 @@ import torch.nn as nn
 import numpy as np
 from Params import configs
 from validation import validate
-import sys
+
+import os
+from tqdm import trange
 
 device = torch.device(configs.device)
 
@@ -53,6 +55,8 @@ class PPO:
                  hidden_dim_actor,
                  num_mlp_layers_critic,
                  hidden_dim_critic,
+                 init_method,
+                 ckpt_path,
                  ):
         self.lr = lr
         self.gamma = gamma
@@ -71,11 +75,12 @@ class PPO:
                                   hidden_dim_actor=hidden_dim_actor,
                                   num_mlp_layers_critic=num_mlp_layers_critic,
                                   hidden_dim_critic=hidden_dim_critic,
+                                  init_method=init_method,
                                   device=device)
         self.policy_old = deepcopy(self.policy)
 
-        '''self.policy.load_state_dict(
-            torch.load(path='./{}.pth'.format(str(n_j) + '_' + str(n_m) + '_' + str(1) + '_' + str(99))))'''
+        if ckpt_path:
+            self.policy.load_state_dict(torch.load(ckpt_path))
 
         self.policy_old.load_state_dict(self.policy.state_dict())
         self.optimizer = torch.optim.Adam(self.policy.parameters(), lr=lr)
@@ -162,6 +167,10 @@ def main():
     from simulation import Intersection, Vehicle
     from utility import read_intersection_from_json
 
+    # prepare loggings/checkpoints directory
+    os.makedirs(configs.log_dir, exist_ok=True)
+    os.makedirs(configs.ckpt_dir, exist_ok=True)
+
     num_vehicles: int = 10
     configs.n_j = num_vehicles
 
@@ -169,14 +178,14 @@ def main():
     configs.n_m = len(intersection.conflict_zones)
     envs = [TcgEnv() for _ in range(configs.num_envs)]
 
-    validation_gen = datadir_traffic_generator(intersection, "../testdata/validation-100/")
+    validation_gen = datadir_traffic_generator(intersection, configs.valid_dir)
     valid_data = [testcase for testcase in validation_gen]
 
     training_gen = random_traffic_generator(
         intersection,
         num_iter = 0, # infinite
         vehicle_num = num_vehicles,
-        poisson_parameter_list = [0.5]
+        poisson_parameter_list = [configs.train_density]
     )
 
     torch.manual_seed(configs.torch_seed)
@@ -187,17 +196,25 @@ def main():
     memories = [Memory() for _ in range(configs.num_envs)]
 
     ppo = PPO(configs.lr, configs.gamma, configs.k_epochs, configs.eps_clip,
-              n_j=configs.n_j,
-              n_m=configs.n_m,
-              num_layers=configs.num_layers,
-              neighbor_pooling_type=configs.neighbor_pooling_type,
-              input_dim=configs.input_dim,
-              hidden_dim=configs.hidden_dim,
-              num_mlp_layers_feature_extract=configs.num_mlp_layers_feature_extract,
-              num_mlp_layers_actor=configs.num_mlp_layers_actor,
-              hidden_dim_actor=configs.hidden_dim_actor,
-              num_mlp_layers_critic=configs.num_mlp_layers_critic,
-              hidden_dim_critic=configs.hidden_dim_critic)
+                n_j=configs.n_j,
+                n_m=configs.n_m,
+                num_layers=configs.num_layers,
+                neighbor_pooling_type=configs.neighbor_pooling_type,
+                input_dim=configs.input_dim,
+                hidden_dim=configs.hidden_dim,
+                num_mlp_layers_feature_extract=configs.num_mlp_layers_feature_extract,
+                num_mlp_layers_actor=configs.num_mlp_layers_actor,
+                hidden_dim_actor=configs.hidden_dim_actor,
+                num_mlp_layers_critic=configs.num_mlp_layers_critic,
+                hidden_dim_critic=configs.hidden_dim_critic,
+                init_method=configs.init_method,
+                ckpt_path=configs.ckpt_path,
+            )
+
+    if configs.valid_only:
+        vali_result = -validate(intersection, valid_data, ppo.policy).mean()
+        print(f'Validation average delay time: {vali_result:.3f} (sec)')
+        return
 
     # training loop
     log = []
@@ -205,9 +222,8 @@ def main():
     optimal_gaps = []
     optimal_gap = 1
     record = 100000
-    for i_update in range(configs.max_updates):
-
-        t3 = time.time()
+    t = trange(configs.max_updates)
+    for i_update in t:
 
         ep_rewards = [0 for _ in range(configs.num_envs)]
         adj_envs = []
@@ -280,34 +296,26 @@ def main():
         mean_rewards_all_env = sum(ep_rewards) / len(ep_rewards)
         log.append([i_update, mean_rewards_all_env])
         if (i_update + 1) % 100 == 0:
-            file_writing_obj = open('./' + 'log_' + str(configs.n_j) + '_' + str(configs.n_m) + '_' + str(configs.low) + '_' + str(configs.high) + '.txt', 'w')
-            file_writing_obj.write(str(log))
-
-        # log results
-        print('Episode {}\t Last reward: {:.2f}\t Mean_Vloss: {:.8f}'.format(
-            i_update + 1, mean_rewards_all_env, v_loss))
+            with open(os.path.join(configs.log_dir, f'log_{configs.exp_name}.txt'), 'w') as f:
+                f.write(str(log))
         
         # validate and save use mean performance
-        t4 = time.time()
         if (i_update + 1) % 100 == 0:
             vali_result = -validate(intersection, valid_data, ppo.policy).mean()
             validation_log.append(vali_result)
             if vali_result < record:
-                torch.save(ppo.policy.state_dict(), './{}.pth'.format(
-                    str(configs.n_j) + '_' + str(configs.n_m) + '_' + str(configs.low) + '_' + str(configs.high)))
+                torch.save(ppo.policy.state_dict(), os.path.join(configs.ckpt_dir, f'{configs.exp_name}.pth'))
                 record = vali_result
-            print('The validation quality is:', vali_result)
-            file_writing_obj1 = open(
-                './' + 'vali_' + str(configs.n_j) + '_' + str(configs.n_m) + '_' + str(configs.low) + '_' + str(configs.high) + '.txt', 'w')
-            file_writing_obj1.write(str(validation_log))
-        t5 = time.time()
+            t.write(f'Episode {i_update + 1} - validation average delay time: {vali_result:.3f} (sec)')
+            with open(os.path.join(configs.log_dir, f'valid_{configs.exp_name}.txt'), 'w') as f:
+                f.write(str(validation_log))
 
-        # print('Training:', t4 - t3)
-        # print('Validation:', t5 - t4)
+        # log results
+        t.set_postfix({
+            'reward': f'{mean_rewards_all_env:.2f}',
+            'vloss': f'{v_loss:.3f}'
+        })
 
 
 if __name__ == '__main__':
-    total1 = time.time()
     main()
-    total2 = time.time()
-    # print(total2 - total1)

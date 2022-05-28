@@ -135,7 +135,7 @@ def optimal_sol(intersection, datadir):
 
 
 if __name__ == "__main__":
-    datadir = pathlib.Path("../testdata/validation-100/")
+    datadir = pathlib.Path("../testdata/validation-d0.9-100/")
     intersection = read_intersection_from_json("../intersection_configs/2x2.json")
 
     igreedy_result = eval_priority_based_policy(intersection, datadir, igreedy_policy)
