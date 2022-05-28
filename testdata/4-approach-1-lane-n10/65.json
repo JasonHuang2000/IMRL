@@ -1,0 +1,114 @@
+[
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 24,
+    "id": "vehicle-0",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1",
+      "3",
+      "4"
+    ],
+    "vertex_passing_time": 12
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 29,
+    "id": "vehicle-1",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4"
+    ],
+    "vertex_passing_time": 10
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 32,
+    "id": "vehicle-2",
+    "src_lane_id": "E",
+    "trajectory": [
+      "2",
+      "1"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 34,
+    "id": "vehicle-3",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4",
+      "2",
+      "1"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 43,
+    "id": "vehicle-4",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 44,
+    "id": "vehicle-5",
+    "src_lane_id": "E",
+    "trajectory": [
+      "2",
+      "1",
+      "3"
+    ],
+    "vertex_passing_time": 11
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 87,
+    "id": "vehicle-6",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4",
+      "2",
+      "1"
+    ],
+    "vertex_passing_time": 10
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 92,
+    "id": "vehicle-7",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4",
+      "2",
+      "1"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 95,
+    "id": "vehicle-8",
+    "src_lane_id": "E",
+    "trajectory": [
+      "2",
+      "1"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 97,
+    "id": "vehicle-9",
+    "src_lane_id": "W",
+    "trajectory": [
+      "3"
+    ],
+    "vertex_passing_time": 8
+  }
+]

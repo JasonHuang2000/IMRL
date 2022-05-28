@@ -1,0 +1,319 @@
+[
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 5,
+    "id": "vehicle-0",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 15,
+    "id": "vehicle-1",
+    "src_lane_id": "E",
+    "trajectory": [
+      "2"
+    ],
+    "vertex_passing_time": 10
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 17,
+    "id": "vehicle-2",
+    "src_lane_id": "W",
+    "trajectory": [
+      "3"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 22,
+    "id": "vehicle-3",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4"
+    ],
+    "vertex_passing_time": 7
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 39,
+    "id": "vehicle-4",
+    "src_lane_id": "E",
+    "trajectory": [
+      "2"
+    ],
+    "vertex_passing_time": 10
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 42,
+    "id": "vehicle-5",
+    "src_lane_id": "E",
+    "trajectory": [
+      "2"
+    ],
+    "vertex_passing_time": 11
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 51,
+    "id": "vehicle-6",
+    "src_lane_id": "E",
+    "trajectory": [
+      "2",
+      "1",
+      "3"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 53,
+    "id": "vehicle-7",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1"
+    ],
+    "vertex_passing_time": 7
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 62,
+    "id": "vehicle-8",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1",
+      "3"
+    ],
+    "vertex_passing_time": 11
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 62,
+    "id": "vehicle-9",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 72,
+    "id": "vehicle-10",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1",
+      "3",
+      "4"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 77,
+    "id": "vehicle-11",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4",
+      "2"
+    ],
+    "vertex_passing_time": 7
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 78,
+    "id": "vehicle-12",
+    "src_lane_id": "W",
+    "trajectory": [
+      "3",
+      "4"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 91,
+    "id": "vehicle-13",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4",
+      "2"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 97,
+    "id": "vehicle-14",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4",
+      "2"
+    ],
+    "vertex_passing_time": 12
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 98,
+    "id": "vehicle-15",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 116,
+    "id": "vehicle-16",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 121,
+    "id": "vehicle-17",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1",
+      "3",
+      "4"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 124,
+    "id": "vehicle-18",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 135,
+    "id": "vehicle-19",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1"
+    ],
+    "vertex_passing_time": 11
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 135,
+    "id": "vehicle-20",
+    "src_lane_id": "W",
+    "trajectory": [
+      "3"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 137,
+    "id": "vehicle-21",
+    "src_lane_id": "W",
+    "trajectory": [
+      "3",
+      "4"
+    ],
+    "vertex_passing_time": 11
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 148,
+    "id": "vehicle-22",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1"
+    ],
+    "vertex_passing_time": 7
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 163,
+    "id": "vehicle-23",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1"
+    ],
+    "vertex_passing_time": 7
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 163,
+    "id": "vehicle-24",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 168,
+    "id": "vehicle-25",
+    "src_lane_id": "W",
+    "trajectory": [
+      "3"
+    ],
+    "vertex_passing_time": 11
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 171,
+    "id": "vehicle-26",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 174,
+    "id": "vehicle-27",
+    "src_lane_id": "E",
+    "trajectory": [
+      "2",
+      "1",
+      "3"
+    ],
+    "vertex_passing_time": 7
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 185,
+    "id": "vehicle-28",
+    "src_lane_id": "S",
+    "trajectory": [
+      "4",
+      "2"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 186,
+    "id": "vehicle-29",
+    "src_lane_id": "N",
+    "trajectory": [
+      "1",
+      "3",
+      "4"
+    ],
+    "vertex_passing_time": 12
+  }
+]

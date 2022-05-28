@@ -1,0 +1,127 @@
+[
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 3,
+    "id": "vehicle-0",
+    "src_lane_id": "S",
+    "trajectory": [
+      "15",
+      "13"
+    ],
+    "vertex_passing_time": 12
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 10,
+    "id": "vehicle-1",
+    "src_lane_id": "E",
+    "trajectory": [
+      "6",
+      "1"
+    ],
+    "vertex_passing_time": 10
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 13,
+    "id": "vehicle-2",
+    "src_lane_id": "S",
+    "trajectory": [
+      "15",
+      "12",
+      "8",
+      "4",
+      "3",
+      "2"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 20,
+    "id": "vehicle-3",
+    "src_lane_id": "N",
+    "trajectory": [
+      "0",
+      "2"
+    ],
+    "vertex_passing_time": 10
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 25,
+    "id": "vehicle-4",
+    "src_lane_id": "N",
+    "trajectory": [
+      "0",
+      "2"
+    ],
+    "vertex_passing_time": 10
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 30,
+    "id": "vehicle-5",
+    "src_lane_id": "W",
+    "trajectory": [
+      "9",
+      "10",
+      "11",
+      "8",
+      "5",
+      "1"
+    ],
+    "vertex_passing_time": 12
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 31,
+    "id": "vehicle-6",
+    "src_lane_id": "N",
+    "trajectory": [
+      "0",
+      "3",
+      "7",
+      "10",
+      "14"
+    ],
+    "vertex_passing_time": 7
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 35,
+    "id": "vehicle-7",
+    "src_lane_id": "N",
+    "trajectory": [
+      "0",
+      "3",
+      "7",
+      "11",
+      "12",
+      "13"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 35,
+    "id": "vehicle-8",
+    "src_lane_id": "S",
+    "trajectory": [
+      "15",
+      "13"
+    ],
+    "vertex_passing_time": 10
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 48,
+    "id": "vehicle-9",
+    "src_lane_id": "E",
+    "trajectory": [
+      "6",
+      "1"
+    ],
+    "vertex_passing_time": 11
+  }
+]

@@ -4,9 +4,6 @@
 # numpy
 *.npy
 
-# testdata
-testdata/
-
 # Visual Studio Code
 .vscode/*
 .vscode/settings.json

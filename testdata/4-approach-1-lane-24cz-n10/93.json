@@ -1,0 +1,160 @@
+[
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 3,
+    "id": "vehicle-0",
+    "src_lane_id": "N",
+    "trajectory": [
+      "0",
+      "3",
+      "8",
+      "13",
+      "17",
+      "22"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 26,
+    "id": "vehicle-1",
+    "src_lane_id": "N",
+    "trajectory": [
+      "0",
+      "3",
+      "8",
+      "11",
+      "14",
+      "19",
+      "20",
+      "21"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 30,
+    "id": "vehicle-2",
+    "src_lane_id": "E",
+    "trajectory": [
+      "7",
+      "6",
+      "5",
+      "4",
+      "3",
+      "2"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 33,
+    "id": "vehicle-3",
+    "src_lane_id": "S",
+    "trajectory": [
+      "23",
+      "20",
+      "15",
+      "12",
+      "9",
+      "4",
+      "3",
+      "2"
+    ],
+    "vertex_passing_time": 12
+  },
+  {
+    "dst_lane_id": "E",
+    "earliest_arrival_time": 37,
+    "id": "vehicle-4",
+    "src_lane_id": "N",
+    "trajectory": [
+      "0",
+      "3",
+      "8",
+      "11",
+      "14",
+      "19",
+      "20",
+      "21"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 38,
+    "id": "vehicle-5",
+    "src_lane_id": "S",
+    "trajectory": [
+      "23",
+      "20",
+      "15",
+      "12",
+      "9",
+      "4",
+      "3",
+      "2"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 47,
+    "id": "vehicle-6",
+    "src_lane_id": "N",
+    "trajectory": [
+      "0",
+      "3",
+      "8",
+      "13",
+      "17",
+      "22"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "S",
+    "earliest_arrival_time": 52,
+    "id": "vehicle-7",
+    "src_lane_id": "E",
+    "trajectory": [
+      "7",
+      "6",
+      "5",
+      "9",
+      "11",
+      "13",
+      "17",
+      "22"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "N",
+    "earliest_arrival_time": 58,
+    "id": "vehicle-8",
+    "src_lane_id": "E",
+    "trajectory": [
+      "7",
+      "1"
+    ],
+    "vertex_passing_time": 11
+  },
+  {
+    "dst_lane_id": "W",
+    "earliest_arrival_time": 69,
+    "id": "vehicle-9",
+    "src_lane_id": "S",
+    "trajectory": [
+      "23",
+      "20",
+      "15",
+      "12",
+      "9",
+      "4",
+      "3",
+      "2"
+    ],
+    "vertex_passing_time": 12
+  }
+]

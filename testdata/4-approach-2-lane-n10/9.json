@@ -1,0 +1,125 @@
+[
+  {
+    "dst_lane_id": "N-right",
+    "earliest_arrival_time": 1,
+    "id": "vehicle-0",
+    "src_lane_id": "E-right",
+    "trajectory": [
+      "3"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "S-left",
+    "earliest_arrival_time": 1,
+    "id": "vehicle-1",
+    "src_lane_id": "E-left",
+    "trajectory": [
+      "7",
+      "6",
+      "9",
+      "13"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "E-right",
+    "earliest_arrival_time": 5,
+    "id": "vehicle-2",
+    "src_lane_id": "S-right",
+    "trajectory": [
+      "15"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "S-left",
+    "earliest_arrival_time": 6,
+    "id": "vehicle-3",
+    "src_lane_id": "W-right",
+    "trajectory": [
+      "12",
+      "13"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "N-right",
+    "earliest_arrival_time": 12,
+    "id": "vehicle-4",
+    "src_lane_id": "S-right",
+    "trajectory": [
+      "15",
+      "11",
+      "7",
+      "3"
+    ],
+    "vertex_passing_time": 11
+  },
+  {
+    "dst_lane_id": "S-right",
+    "earliest_arrival_time": 17,
+    "id": "vehicle-5",
+    "src_lane_id": "N-right",
+    "trajectory": [
+      "0",
+      "4",
+      "8",
+      "12"
+    ],
+    "vertex_passing_time": 13
+  },
+  {
+    "dst_lane_id": "N-right",
+    "earliest_arrival_time": 18,
+    "id": "vehicle-6",
+    "src_lane_id": "W-left",
+    "trajectory": [
+      "8",
+      "9",
+      "10",
+      "7",
+      "3"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "S-left",
+    "earliest_arrival_time": 21,
+    "id": "vehicle-7",
+    "src_lane_id": "W-right",
+    "trajectory": [
+      "12",
+      "13"
+    ],
+    "vertex_passing_time": 9
+  },
+  {
+    "dst_lane_id": "W-right",
+    "earliest_arrival_time": 27,
+    "id": "vehicle-8",
+    "src_lane_id": "S-left",
+    "trajectory": [
+      "14",
+      "10",
+      "6",
+      "1",
+      "0"
+    ],
+    "vertex_passing_time": 8
+  },
+  {
+    "dst_lane_id": "W-right",
+    "earliest_arrival_time": 28,
+    "id": "vehicle-9",
+    "src_lane_id": "S-left",
+    "trajectory": [
+      "14",
+      "10",
+      "6",
+      "1",
+      "0"
+    ],
+    "vertex_passing_time": 13
+  }
+]
