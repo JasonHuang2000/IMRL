@@ -163,7 +163,7 @@ class PPO:
 
 def main():
     from traffic_gen import datadir_traffic_generator, random_traffic_generator
-    from tcg.tcg_env import TcgEnv
+    from tcg.tcg_env import TcgEnv, TcgEnvWithRollback
     from simulation import Intersection, Vehicle
     from utility import read_intersection_from_json
 
@@ -176,7 +176,7 @@ def main():
 
     intersection: Intersection = read_intersection_from_json(configs.intersection_config)
     configs.n_m = len(intersection.conflict_zones)
-    envs = [TcgEnv() for _ in range(configs.num_envs)]
+    envs = [TcgEnvWithRollback() for _ in range(configs.num_envs)]
 
     validation_gen = datadir_traffic_generator(intersection, configs.valid_dir)
     valid_data = [testcase for testcase in validation_gen]
@@ -232,13 +232,7 @@ def main():
         mask_envs = []
         
         vehicles = next(training_gen)
-        for i, env in enumerate(envs):
-            adj, fea, candidate, mask = env.reset(intersection, deepcopy(vehicles))
-            adj_envs.append(adj)
-            fea_envs.append(fea)
-            candidate_envs.append(candidate)
-            mask_envs.append(mask)
-            ep_rewards[i] = 0
+        envs[0].reset(intersection, deepcopy(vehicles))
         num_vertices: int = envs[0].tcg.num_vertices
 
         g_pool_step = g_pool_cal(graph_pool_type=configs.graph_pool_type,
@@ -246,49 +240,47 @@ def main():
                             n_nodes=num_vertices,
                             device=device)
 
-        # rollout the env
-        while True:
-            fea_tensor_envs = [torch.from_numpy(np.copy(fea)).to(device) for fea in fea_envs]
-            adj_tensor_envs = [torch.from_numpy(np.copy(adj)).to(device).to_sparse() for adj in adj_envs]
-            candidate_tensor_envs = [torch.from_numpy(np.copy(candidate)).to(device) for candidate in candidate_envs]
-            mask_tensor_envs = [torch.from_numpy(np.copy(mask)).to(device) for mask in mask_envs]
-            
-            with torch.no_grad():
-                action_envs = []
-                a_idx_envs = []
-                for i in range(configs.num_envs):
-                    pi, _ = ppo.policy_old(x=fea_tensor_envs[i],
-                                           graph_pool=g_pool_step,
-                                           padded_nei=None,
-                                           adj=adj_tensor_envs[i],
-                                           candidate=candidate_tensor_envs[i].unsqueeze(0),
-                                           mask=mask_tensor_envs[i].unsqueeze(0))
-                    action, a_idx = select_action(pi, candidate_envs[i], memories[i])
-                    action_envs.append(action)
-                    a_idx_envs.append(a_idx)
-            
-            adj_envs = []
-            fea_envs = []
-            candidate_envs = []
-            mask_envs = []
-            # Saving episode data
-            for i in range(configs.num_envs):
-                memories[i].adj_mb.append(adj_tensor_envs[i])
-                memories[i].fea_mb.append(fea_tensor_envs[i])
-                memories[i].candidate_mb.append(candidate_tensor_envs[i])
-                memories[i].mask_mb.append(mask_tensor_envs[i])
-                memories[i].a_mb.append(a_idx_envs[i])
+        def collect_memory(env, intersection, vehicles, memory):
+            adj, fea, candidate, mask = env.reset(intersection, vehicles)
+            while not env.done():
+                fea_tensor = torch.from_numpy(np.copy(fea)).to(device)
+                adj_tensor = torch.from_numpy(np.copy(adj)).to(device).to_sparse()
+                candidate_tensor = torch.from_numpy(np.copy(candidate)).to(device)
+                mask_tensor = torch.from_numpy(np.copy(mask)).to(device)
 
-                adj, fea, reward, done, candidate, mask = envs[i].step(action_envs[i].item())
-                adj_envs.append(adj)
-                fea_envs.append(fea)
-                candidate_envs.append(candidate)
-                mask_envs.append(mask)
-                ep_rewards[i] += reward
-                memories[i].r_mb.append(reward)
-                memories[i].done_mb.append(done)
-            if envs[0].done():
-                break
+                with torch.no_grad():
+                    pi, _ = ppo.policy_old(
+                        x=fea_tensor,
+                        graph_pool=g_pool_step,
+                        padded_nei=None,
+                        adj=adj_tensor,
+                        candidate=candidate_tensor.unsqueeze(0),
+                        mask=mask_tensor.unsqueeze(0)
+                    )
+                    action, a_idx = select_action(pi, candidate, memory)
+                
+                env.adj_history[-1] = adj_tensor
+                env.feature_history[-1] = fea_tensor
+                env.vertices_history[-1] = candidate_tensor
+                env.mask_history[-1] = mask_tensor
+
+                adj, fea, reward, done, candidate, mask = env.step(action.item())
+                while len(env.reward_history) < len(memory.logprobs):
+                    memory.logprobs.pop(-1)
+                
+            for i in range(num_vertices):
+                memory.adj_mb.append(env.adj_history[i])
+                memory.fea_mb.append(env.feature_history[i])
+                memory.candidate_mb.append(env.vertices_history[i])
+                memory.mask_mb.append(env.mask_history[i])
+                memory.a_mb.append(env.a_idx_history[i])
+                memory.r_mb.append(env.reward_history[i])
+                memory.done_mb.append(i == num_vertices-1)
+            
+            return sum(env.reward_history)
+
+        for i in range(configs.num_envs):
+            ep_rewards[i] = collect_memory(envs[i], intersection, deepcopy(vehicles), memories[i])
 
         loss, v_loss = ppo.update(memories, num_vertices, configs.graph_pool_type)
         for memory in memories:

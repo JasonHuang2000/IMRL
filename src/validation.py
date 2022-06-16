@@ -1,5 +1,5 @@
 def validate(intersection, valid_set, model):
-    from tcg.tcg_env import TcgEnv
+    from tcg.tcg_env import TcgEnv, TcgEnvWithRollback
     from mb_agg import g_pool_cal
     from agent_utils import sample_select_action
     from agent_utils import greedy_select_action
@@ -8,7 +8,7 @@ def validate(intersection, valid_set, model):
     from Params import configs
     from copy import deepcopy
 
-    env = TcgEnv()
+    env = TcgEnvWithRollback()
     device = torch.device(configs.device)
     make_spans = []
     # rollout using model
@@ -37,7 +37,7 @@ def validate(intersection, valid_set, model):
             rewards += reward
             if done:
                 break
-        make_spans.append(rewards)
+        make_spans.append(sum(env.reward_history))
         # print(rewards - env.posRewards)
     return np.array(make_spans)
 
