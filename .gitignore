@@ -153,8 +153,10 @@ loggings/
 checkpoints/
 plots/
 
-# testing script
+# testing script/files
 example.py
+testdata/
+gen_data/
 
-# ploting scipt
-illustrate.ipynb
+# utility files
+utils/

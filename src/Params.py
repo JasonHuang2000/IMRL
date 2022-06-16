@@ -8,6 +8,8 @@ parser.add_argument('--ckpt_path', type=str, default=None)
 parser.add_argument('--valid_only', type=bool, default=False)
 parser.add_argument('--valid_dir', type=str, default='../testdata/validation-100/')
 parser.add_argument('--train_density', type=float, default=0.5)
+parser.add_argument('--intersection_config', type=str, default='../intersection_configs/4-approach-1-lane.json')
+parser.add_argument('--num_vehicles', type=int, default=10)
 # args for device
 parser.add_argument('--device', type=str, default="cuda", help='Number of jobs of instances')
 # args for env

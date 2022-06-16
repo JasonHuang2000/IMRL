@@ -171,10 +171,10 @@ def main():
     os.makedirs(configs.log_dir, exist_ok=True)
     os.makedirs(configs.ckpt_dir, exist_ok=True)
 
-    num_vehicles: int = 10
+    num_vehicles: int = configs.num_vehicles
     configs.n_j = num_vehicles
 
-    intersection: Intersection = read_intersection_from_json("../intersection_configs/2x2.json")
+    intersection: Intersection = read_intersection_from_json(configs.intersection_config)
     configs.n_m = len(intersection.conflict_zones)
     envs = [TcgEnv() for _ in range(configs.num_envs)]
 
