@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Tuple, Union
+from typing import Dict, Iterable, List, Tuple, Union, Optional
 from copy import deepcopy
 
 import numpy as np
@@ -365,11 +365,22 @@ class TimingConflictGraphNumpy:
 
         return res
 
-    def get_delay_time(self) -> float:
-        leaving_time = (
-            self.entering_time_lb[self.last_vertices]
-            + self.passing_time[self.last_vertices]
-        )
+    def get_delay_time(self, vehicle_ids: Optional[List[str]] = None) -> float:
+        indices = list(range(len(self.vehicle_list)))
+        if vehicle_ids is not None:
+            indices = []
+            for vehicle_id in vehicle_ids:
+                idx = 0
+                for i, vehicle in enumerate(self.vehicle_list):
+                    if vehicle.id == vehicle_id:
+                        idx = i
+                        break
+                else:
+                    raise Exception("nonexistent vehicle id")
+                indices.append(idx)
+
+        vertices = [self.last_vertices[i] for i in indices]
+        leaving_time = self.entering_time_lb[vertices] + self.passing_time[vertices]
         return np.sum(leaving_time - self.leaving_time_lb) / 10
 
     def get_last_leaving_time(self) -> float:
