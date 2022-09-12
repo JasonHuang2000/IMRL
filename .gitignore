@@ -157,6 +157,8 @@ plots/
 example.py
 testdata/
 gen_data/
+wbw_data/
+ubl_data/
 
 # utility files
 utils/
