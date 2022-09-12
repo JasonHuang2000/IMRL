@@ -1,0 +1,58 @@
+{
+    "conflict_zones": {
+        "0": {},
+        "1": {},
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {},
+        "6": {},
+        "7": {},
+        "8": {},
+        "9": {},
+        "10": {},
+        "11": {}
+    },
+    "source_lanes": {
+        "N": {
+            "associated_conflict_zones": ["0"]
+        },
+        "E": {
+            "associated_conflict_zones": ["5"]
+        },
+        "W": {
+            "associated_conflict_zones": ["6"]
+        },
+        "S": {
+            "associated_conflict_zones": ["11"]
+        }
+    },
+    "destination_lanes": {
+        "N": {
+            "associated_conflict_zones": ["1"]
+        },
+        "E": {
+            "associated_conflict_zones": ["9"]
+        },
+        "W": {
+            "associated_conflict_zones": ["2"]
+        },
+        "S": {
+            "associated_conflict_zones": ["10"]
+        }
+    },
+    "trajectories": [
+        ["0", "2"],
+        ["0", "3", "7", "10"],
+        ["0", "3", "8", "9"],
+        ["5", "1"],
+        ["5", "4", "3", "2"],
+        ["5", "4", "7", "10"],
+        ["6", "10"],
+        ["6", "7", "8", "9"],
+        ["6", "7", "4", "1"],
+        ["11", "9"],
+        ["11", "8", "4", "1"],
+        ["11", "8", "3", "2"]
+    ]
+}
