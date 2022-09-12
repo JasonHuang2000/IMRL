@@ -365,7 +365,12 @@ class TimingConflictGraphNumpy:
 
         return res
 
-    def get_delay_time(self, vehicle_ids: Optional[List[str]] = None) -> float:
+    def get_delay_time(self, start_offset, window_size, vehicle_ids: Optional[List[str]] = None) -> Tuple[float]:
+        # leaving_time = (
+        #     self.entering_time_lb[self.last_vertices]
+        #     + self.passing_time[self.last_vertices]
+        # )
+        # return np.sum(leaving_time - self.leaving_time_lb) / 10
         indices = list(range(len(self.vehicle_list)))
         if vehicle_ids is not None:
             indices = []
@@ -381,7 +386,9 @@ class TimingConflictGraphNumpy:
 
         vertices = [self.last_vertices[i] for i in indices]
         leaving_time = self.entering_time_lb[vertices] + self.passing_time[vertices]
-        return np.sum(leaving_time - self.leaving_time_lb) / 10
+        # print(leaving_time, self.leaving_time_lb)
+        # print(leaving_time, self.leaving_time_lb[start_offset : start_offset+window_size])
+        return np.sum(leaving_time - self.leaving_time_lb[start_offset : start_offset+window_size]) / 10, max(leaving_time) / 10
 
     def get_last_leaving_time(self) -> float:
         return np.max(self.entering_time_lb + self.passing_time) / 10

@@ -145,7 +145,13 @@ class TcgEnvWithRollback:
         self.vertices_history.append(front_vertices)
         self.mask_history.append(mask)
 
-        cur_delay_time = self.tcg.get_delay_time()
+        cur_delay_time, max_leaving_time = self.tcg.get_delay_time(
+            self.start_offset, self.window_size,
+            vehicle_ids=[f'vehicle-{i}' for i in range(
+                self.start_idx, 
+                self.start_idx + self.window_size
+            )]
+        )
         self.delay_time_history.append(cur_delay_time)
 
         reward = self.prev_delay_time - cur_delay_time
@@ -178,9 +184,16 @@ class TcgEnvWithRollback:
             phy_state = self.get_phy_state()
 
         # if deadlock occurs, the returned reward is meaningless
-        return adj, feature, reward, self.done(), front_vertices, mask
+        return adj, feature, reward, self.done(), front_vertices, mask, max_leaving_time
 
-    def reset(self, intersection: Intersection, vehicles: Iterable[Vehicle]):
+    def reset(
+        self, 
+        intersection: Intersection, 
+        vehicles: Iterable[Vehicle], 
+        start_idx: int = 0, 
+        start_offset: int = None, 
+        window_size: int = None,
+    ):
         self.tcg = TimingConflictGraphNumpy(intersection, vehicles)
         self.prev_delay_time = 0
         self.blocked_actions = [[]]
@@ -197,6 +210,11 @@ class TcgEnvWithRollback:
         self.reward_history = []
         self.delay_time_history = [0]
         self.dead_states = set()
+
+        # delay time calculation
+        self.start_idx = start_idx
+        self.window_size = window_size if window_size is not None else len(vehicles)
+        self.start_offset = start_offset if start_offset is not None else self.start_idx
 
         return adj, feature, front_vertices, mask
 
