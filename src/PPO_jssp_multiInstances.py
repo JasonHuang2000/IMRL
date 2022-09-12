@@ -174,7 +174,7 @@ def main():
     num_vehicles: int = 10
     configs.n_j = num_vehicles
 
-    intersection: Intersection = read_intersection_from_json("../intersection_configs/2x2.json")
+    intersection: Intersection = read_intersection_from_json(configs.intersection_config)
     configs.n_m = len(intersection.conflict_zones)
     envs = [TcgEnv() for _ in range(configs.num_envs)]
 
@@ -300,7 +300,7 @@ def main():
                 f.write(str(log))
         
         # validate and save use mean performance
-        if (i_update + 1) % 100 == 0:
+        if (i_update + 1) % 500 == 0:
             vali_result = -validate(intersection, valid_data, ppo.policy).mean()
             validation_log.append(vali_result)
             if vali_result < record:

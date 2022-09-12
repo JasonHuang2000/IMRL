@@ -6,8 +6,9 @@ parser.add_argument('--log_dir', type=str, default='./loggings')
 parser.add_argument('--ckpt_dir', type=str, default='./checkpoints')
 parser.add_argument('--ckpt_path', type=str, default=None)
 parser.add_argument('--valid_only', type=bool, default=False)
-parser.add_argument('--valid_dir', type=str, default='../testdata/validation-100/')
+parser.add_argument('--valid_dir', type=str, default='../gen_data/4-approach-1-lane/n10-d0.5/')
 parser.add_argument('--train_density', type=float, default=0.5)
+parser.add_argument('--intersection_config', type=str, default='../intersection_configs/4-approach-1-lane.json')
 # args for device
 parser.add_argument('--device', type=str, default="cuda", help='Number of jobs of instances')
 # args for env
