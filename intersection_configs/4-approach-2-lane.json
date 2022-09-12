@@ -1,0 +1,101 @@
+{
+    "conflict_zones": {
+        "0": {},
+        "1": {},
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {},
+        "6": {},
+        "7": {},
+        "8": {},
+        "9": {},
+        "10": {},
+        "11": {},
+        "12": {},
+        "13": {},
+        "14": {},
+        "15": {}
+    },
+    "source_lanes": {
+        "N-right": {
+            "associated_conflict_zones": ["0"]
+        },
+        "N-left": {
+            "associated_conflict_zones": ["1"]
+        },
+        "E-right": {
+            "associated_conflict_zones": ["3"]
+        },
+        "E-left": {
+            "associated_conflict_zones": ["7"]
+        },
+        "W-right": {
+            "associated_conflict_zones": ["12"]
+        },
+        "W-left": {
+            "associated_conflict_zones": ["8"]
+        },
+        "S-right": {
+            "associated_conflict_zones": ["15"]
+        },
+        "S-left": {
+            "associated_conflict_zones": ["14"]
+        }
+    },
+    "destination_lanes": {
+        "N-right": {
+            "associated_conflict_zones": ["3"]
+        },
+        "N-left": {
+            "associated_conflict_zones": ["2"]
+        },
+        "E-right": {
+            "associated_conflict_zones": ["15"]
+        },
+        "E-left": {
+            "associated_conflict_zones": ["11"]
+        },
+        "W-right": {
+            "associated_conflict_zones": ["0"]
+        },
+        "W-left": {
+            "associated_conflict_zones": ["4"]
+        },
+        "S-right": {
+            "associated_conflict_zones": ["12"]
+        },
+        "S-left": {
+            "associated_conflict_zones": ["13"]
+        }
+    },
+    "trajectories": [
+        ["12", "13", "14", "15"],
+        ["12"],
+        ["12", "13"],
+        ["8", "9", "10", "11"],
+        ["8", "9", "6", "2"],
+        ["8", "9", "10", "7", "3"],
+
+        ["15", "11", "7", "3"],
+        ["15"],
+        ["15", "11"],
+        ["14", "10", "6", "2"],
+        ["14", "10", "5", "4"],
+        ["14", "10", "6", "1", "0"],
+
+        ["3", "2", "1", "0"],
+        ["3"],
+        ["3", "2"],
+        ["7", "6", "5", "4"],
+        ["7", "6", "9", "13"],
+        ["7", "6", "5", "8", "12"],
+
+        ["0", "4", "8", "12"],
+        ["0"],
+        ["0", "4"],
+        ["1", "5", "9", "13"],
+        ["1", "5", "10", "11"],
+        ["1", "5", "9", "14", "15"]
+    ]
+}
