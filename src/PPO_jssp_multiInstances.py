@@ -4,11 +4,10 @@ from agent_utils import select_action
 from models.actor_critic import ActorCritic
 from copy import deepcopy
 import torch
-import time
 import torch.nn as nn
 import numpy as np
 from Params import configs
-from validation import validate
+from validation import validate, validate_sliding_window
 
 import os
 from tqdm import trange
@@ -183,8 +182,8 @@ def main():
 
     training_gen = random_traffic_generator(
         intersection,
-        num_iter = 0, # infinite
-        vehicle_num = num_vehicles,
+        num_iter=0, # infinite
+        vehicle_num=num_vehicles,
         poisson_parameter_list = [configs.train_density]
     )
 
@@ -212,8 +211,13 @@ def main():
             )
 
     if configs.valid_only:
-        vali_result = -validate(intersection, valid_data, ppo.policy).mean()
-        print(f'Validation average delay time: {vali_result:.3f} (sec)')
+        if (configs.sw_valid):
+            valid_result = validate_sliding_window(intersection, valid_data, ppo.policy, configs.sw_group_size, configs.sw_stride).mean()
+            # valid_result = validate_sliding_window(intersection, valid_data, ppo.policy, configs.sw_group_size, configs.sw_stride)
+        else:
+            valid_result = -validate(intersection, valid_data, ppo.policy).mean()
+            # valid_result = -validate(intersection, valid_data, ppo.policy)
+        print(f'Validation average delay time: {valid_result:.3f} (sec)')
         return
 
     # training loop
@@ -264,7 +268,7 @@ def main():
                 env.vertices_history[-1] = candidate_tensor
                 env.mask_history[-1] = mask_tensor
 
-                adj, fea, reward, done, candidate, mask = env.step(action.item())
+                adj, fea, reward, done, candidate, mask, _ = env.step(action.item())
                 while len(env.reward_history) < len(memory.logprobs):
                     memory.logprobs.pop(-1)
                 
@@ -292,13 +296,13 @@ def main():
                 f.write(str(log))
         
         # validate and save use mean performance
-        if (i_update + 1) % 100 == 0:
+        if (i_update + 1) % 500 == 0:
             vali_result = -validate(intersection, valid_data, ppo.policy).mean()
             validation_log.append(vali_result)
             if vali_result < record:
-                torch.save(ppo.policy.state_dict(), os.path.join(configs.ckpt_dir, f'{configs.exp_name}.pth'))
+                torch.save(ppo.policy.state_dict(), os.path.join(configs.ckpt_dir, f'{configs.exp_name}.pt'))
                 record = vali_result
-            t.write(f'Episode {i_update + 1} - validation average delay time: {vali_result:.3f} (sec)')
+            t.write(f'Episode {i_update + 1} - validation total delay time: {vali_result:.3f} (sec)')
             with open(os.path.join(configs.log_dir, f'valid_{configs.exp_name}.txt'), 'w') as f:
                 f.write(str(validation_log))
 
