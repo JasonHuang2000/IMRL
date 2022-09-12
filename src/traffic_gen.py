@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Union
 from pathlib import Path
 import random
 import json
@@ -58,20 +58,38 @@ def random_traffic_generator(
     num_iter: int = 10000,
     vehicle_num: int = 10,
     poisson_parameter_list: List[float] = [0.5],
+    traffic_behaviour = None,
+    traffic_config = None,
 ):
     continue_condition = lambda _: True
     if num_iter > 0:
         continue_condition = lambda i: i < num_iter
+
     i = 0
     while continue_condition(i):
         vehicles = []
         src_to_traj = get_src_traj_dict(intersection)
         poisson_param: float = random.choice(poisson_parameter_list)
-        prob = poisson_param / 10
         t = 0
+        cnt = 0
+
+        if traffic_behaviour == 'wave-by-wave':
+            wave_size = random.choice(traffic_config['wave_size'])
+
+        if traffic_behaviour == 'unbalanced-traffic':
+            prob = { 
+                lane_id: traffic_config['ubl_density'][0] / 10 if i == 0
+                    else traffic_config['ubl_density'][1] / 10 
+                        for i, lane_id in enumerate(intersection.src_lanes)
+            }
+        else:
+            prob = poisson_param / 10
+
         while True:
             for src_lane_id in intersection.src_lanes:
-                if random.random() < prob and len(vehicles) < vehicle_num:
+                if ((traffic_behaviour != 'unbalanced-traffic' and random.random() < prob) or \
+                   (traffic_behaviour == 'unbalanced-traffic' and random.random() < prob[src_lane_id])) and \
+                   len(vehicles) < vehicle_num:
                     traj = random.choice(list(src_to_traj[src_lane_id].keys()))
                     dst_lane_id = src_to_traj[src_lane_id][traj]
                     new_vehicle = Vehicle(
@@ -80,6 +98,14 @@ def random_traffic_generator(
                         vertex_passing_time=random.randint(7, 13)
                     )
                     vehicles.append(new_vehicle)
+                    cnt += 1
+
+                if traffic_behaviour == 'wave-by-wave':
+                    if cnt == wave_size:
+                        t += (traffic_config['wave_gap'] * 10)
+                        cnt = 0
+                        wave_size = random.choice(traffic_config['wave_size'])
+
             if len(vehicles) == vehicle_num:
                 break
             t += 1
@@ -105,6 +131,7 @@ def main(
     num: int = 10,
     vehicle_num: int = 10,
     poisson_parameter_list: List = [0.5],
+    traffic_behaviour: Union[str, None] = None,
 ):
     random.seed(seed)
     intersection: Intersection = read_intersection_from_json(intersection_file_path)
@@ -112,11 +139,19 @@ def main(
     if not data_dir.exists():
         data_dir.mkdir(parents=True)
 
+    traffic_config = {
+        'wave_size': [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        'wave_gap': 10,
+        'ubl_density': [0.9, 0.1],
+    }
+
     gen = random_traffic_generator(
         intersection,
         num_iter=num,
         vehicle_num=vehicle_num,
-        poisson_parameter_list=poisson_parameter_list
+        poisson_parameter_list=poisson_parameter_list,
+        traffic_behaviour=traffic_behaviour,
+        traffic_config=traffic_config,
     )
     for i, vehicles in enumerate(gen):
         dump_traffic(data_dir / f"{i}.json", vehicles)
