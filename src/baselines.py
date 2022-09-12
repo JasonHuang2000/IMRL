@@ -24,17 +24,18 @@ def fcfs_policy(env, schedulable_vertices, feature):
     action = schedulable_vertices[np.argmin(arr_vec)]
     return action
 
-def eval_priority_based_policy(intersection, datadir, priority_based_policy):
+def eval_priority_based_policy(intersection, datadir, priority_based_policy, start_idx = None):
     avg_reward_sum = 0.0
     num_case = 0
     for vehicles in datadir_traffic_generator(intersection, datadir):
         env = TcgEnvWithRollback()
-        adj, feature, vertices, mask = env.reset(intersection, vehicles)
+        # adj, feature, vertices, mask = env.reset(intersection, vehicles)
+        adj, feature, vertices, mask = env.reset(intersection, vehicles, start_idx=0, window_size=len(vehicles))
         done = False
         while not done:
             schedulable_vertices = vertices[(mask == 0).nonzero()]
             action = priority_based_policy(env, schedulable_vertices, feature)
-            adj, feature, reward, done, vertices, mask = env.step(action)
+            adj, feature, reward, done, vertices, mask, _ = env.step(action)
         avg_reward_sum += sum(env.reward_history)
         num_case += 1
     return -avg_reward_sum / num_case
@@ -137,15 +138,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str)
     parser.add_argument('--intersection_config', type=str)
+    parser.add_argument('--start_idx', type=int, default=None)
     configs = parser.parse_args()
 
     datadir = pathlib.Path(configs.data_dir)
     intersection = read_intersection_from_json(configs.intersection_config)
 
-    igreedy_result = eval_priority_based_policy(intersection, datadir, igreedy_policy)
-    fcfs_result = eval_priority_based_policy(intersection, datadir, fcfs_policy)
-    #opt_result = optimal_sol(intersection, datadir)
+    igreedy_result = eval_priority_based_policy(intersection, datadir, igreedy_policy, start_idx=configs.start_idx)
+    # fcfs_result = eval_priority_based_policy(intersection, datadir, fcfs_policy)
+    opt_result = optimal_sol(intersection, datadir)
 
-    #print(f"OPT     : {opt_result:0.6f}")
+    print(f"OPT     : {opt_result:0.6f}")
     print(f"IGreedy : {igreedy_result:0.6f}")
-    print(f"FCFS    : {fcfs_result:0.6f}")
+    # print(f"FCFS    : {fcfs_result:0.6f}")
