@@ -1,4 +1,5 @@
 import pathlib
+import argparse
 
 import numpy as np
 
@@ -135,8 +136,15 @@ def optimal_sol(intersection, datadir):
 
 
 if __name__ == "__main__":
-    datadir = pathlib.Path("../testdata/validation-d0.9-100/")
-    intersection = read_intersection_from_json("../intersection_configs/2x2.json")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_dir', type=str)
+    parser.add_argument('--intersection_config', type=str)
+    parser.add_argument('--start_idx', type=int, default=None)
+    configs = parser.parse_args()
+
+    datadir = pathlib.Path(configs.data_dir)
+    intersection = read_intersection_from_json(configs.intersection_config)
 
     igreedy_result = eval_priority_based_policy(intersection, datadir, igreedy_policy)
     fcfs_result = eval_priority_based_policy(intersection, datadir, fcfs_policy)
