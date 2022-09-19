@@ -304,7 +304,7 @@ def main():
             vali_result = -validate(intersection, valid_data, ppo.policy).mean()
             validation_log.append(vali_result)
             if vali_result < record:
-                torch.save(ppo.policy.state_dict(), os.path.join(configs.ckpt_dir, f'{configs.exp_name}.pth'))
+                torch.save(ppo.policy.state_dict(), os.path.join(configs.ckpt_dir, f'{configs.exp_name}.pt'))
                 record = vali_result
             t.write(f'Episode {i_update + 1} - validation average delay time: {vali_result:.3f} (sec)')
             with open(os.path.join(configs.log_dir, f'valid_{configs.exp_name}.txt'), 'w') as f:
