@@ -7,33 +7,27 @@ import torch
 
 
 class ActorCritic(nn.Module):
-    def __init__(self,
-                 n_j,
-                 n_m,
-                 # feature extraction net unique attributes:
-                 num_layers,
-                 learn_eps,
-                 neighbor_pooling_type,
-                 input_dim,
-                 hidden_dim,
-                 # feature extraction net MLP attributes:
-                 num_mlp_layers_feature_extract,
-                 # actor net MLP attributes:
-                 num_mlp_layers_actor,
-                 hidden_dim_actor,
-                 # critic net MLP attributes:
-                 num_mlp_layers_critic,
-                 hidden_dim_critic,
-                 init_method,
-                 # actor/critic/feature_extraction shared attribute
-                 device,
-                 ):
+    def __init__(
+        self,
+        # feature extraction net unique attributes:
+        num_layers,
+        learn_eps,
+        neighbor_pooling_type,
+        input_dim,
+        hidden_dim,
+        # feature extraction net MLP attributes:
+        num_mlp_layers_feature_extract,
+        # actor net MLP attributes:
+        num_mlp_layers_actor,
+        hidden_dim_actor,
+        # critic net MLP attributes:
+        num_mlp_layers_critic,
+        hidden_dim_critic,
+        init_method,
+        # actor/critic/feature_extraction shared attribute
+        device,
+    ):
         super(ActorCritic, self).__init__()
-        # job size for problems, no business with network
-        self.n_j = n_j
-        # machine size for problems, no business with network
-        self.n_m = n_m
-        self.n_ops_perjob = n_m
         self.device = device
 
         self.feature_extract = GraphCNN(num_layers=num_layers,
@@ -46,21 +40,23 @@ class ActorCritic(nn.Module):
         self.actor = MLPActor(num_mlp_layers_actor, hidden_dim*2, hidden_dim_actor, 1, init_method).to(device)
         self.critic = MLPCritic(num_mlp_layers_critic, hidden_dim, hidden_dim_critic, 1, init_method).to(device)
 
-    def forward(self,
-                x,
-                graph_pool,
-                padded_nei,
-                adj,
-                candidate,
-                mask,
-                ):
+    def forward(
+        self,
+        x,
+        n_j,
+        graph_pool,
+        padded_nei,
+        adj,
+        candidate,
+        mask,
+    ):
 
         h_pooled, h_nodes = self.feature_extract(x=x,
                                                  graph_pool=graph_pool,
                                                  padded_nei=padded_nei,
                                                  adj=adj)
         # prepare policy feature: concat omega feature with global feature
-        dummy = candidate.unsqueeze(-1).expand(-1, self.n_j, h_nodes.size(-1))
+        dummy = candidate.unsqueeze(-1).expand(-1, n_j, h_nodes.size(-1))
         candidate_feature = torch.gather(h_nodes.reshape(dummy.size(0), -1, dummy.size(-1)), 1, dummy)
         h_pooled_repeated = h_pooled.unsqueeze(1).expand_as(candidate_feature)
 

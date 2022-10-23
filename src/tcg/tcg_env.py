@@ -145,7 +145,7 @@ class TcgEnvWithRollback:
         self.vertices_history.append(front_vertices)
         self.mask_history.append(mask)
 
-        cur_delay_time, max_leaving_time = self.tcg.get_delay_time(
+        cur_delay_time, duration = self.tcg.get_delay_time(
             self.start_offset, self.window_size,
             vehicle_ids=[f'vehicle-{i}' for i in range(
                 self.start_idx, 
@@ -184,7 +184,7 @@ class TcgEnvWithRollback:
             phy_state = self.get_phy_state()
 
         # if deadlock occurs, the returned reward is meaningless
-        return adj, feature, reward, self.done(), front_vertices, mask, max_leaving_time
+        return adj, feature, reward, self.done(), front_vertices, mask, duration
 
     def reset(
         self, 

@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from Params import configs
-from validation import validate, validate_sliding_window
+from validation import validate
 
 import os
 from tqdm import trange
@@ -44,7 +44,6 @@ class PPO:
                  k_epochs,
                  eps_clip,
                  n_j,
-                 n_m,
                  num_layers,
                  neighbor_pooling_type,
                  input_dim,
@@ -57,25 +56,26 @@ class PPO:
                  init_method,
                  ckpt_path,
                  ):
+        self.n_j = n_j
         self.lr = lr
         self.gamma = gamma
         self.eps_clip = eps_clip
         self.k_epochs = k_epochs
 
-        self.policy = ActorCritic(n_j=n_j,
-                                  n_m=n_m,
-                                  num_layers=num_layers,
-                                  learn_eps=False,
-                                  neighbor_pooling_type=neighbor_pooling_type,
-                                  input_dim=input_dim,
-                                  hidden_dim=hidden_dim,
-                                  num_mlp_layers_feature_extract=num_mlp_layers_feature_extract,
-                                  num_mlp_layers_actor=num_mlp_layers_actor,
-                                  hidden_dim_actor=hidden_dim_actor,
-                                  num_mlp_layers_critic=num_mlp_layers_critic,
-                                  hidden_dim_critic=hidden_dim_critic,
-                                  init_method=init_method,
-                                  device=device)
+        self.policy = ActorCritic(
+            num_layers=num_layers,
+            learn_eps=False,
+            neighbor_pooling_type=neighbor_pooling_type,
+            input_dim=input_dim,
+            hidden_dim=hidden_dim,
+            num_mlp_layers_feature_extract=num_mlp_layers_feature_extract,
+            num_mlp_layers_actor=num_mlp_layers_actor,
+            hidden_dim_actor=hidden_dim_actor,
+            num_mlp_layers_critic=num_mlp_layers_critic,
+            hidden_dim_critic=hidden_dim_critic,
+            init_method=init_method,
+            device=device
+        )
         self.policy_old = deepcopy(self.policy)
 
         if ckpt_path:
@@ -132,12 +132,15 @@ class PPO:
             loss_sum = 0
             vloss_sum = 0
             for i in range(len(memories)):
-                pis, vals = self.policy(x=fea_mb_t_all_env[i],
-                                        graph_pool=mb_g_pool,
-                                        adj=adj_mb_t_all_env[i],
-                                        candidate=candidate_mb_t_all_env[i],
-                                        mask=mask_mb_t_all_env[i],
-                                        padded_nei=None)
+                pis, vals = self.policy(
+                    x=fea_mb_t_all_env[i],
+                    n_j=self.n_j,
+                    graph_pool=mb_g_pool,
+                    adj=adj_mb_t_all_env[i],
+                    candidate=candidate_mb_t_all_env[i],
+                    mask=mask_mb_t_all_env[i],
+                    padded_nei=None
+                )
                 logprobs, ent_loss = eval_actions(pis.squeeze(), a_mb_t_all_env[i])
                 ratios = torch.exp(logprobs - old_logprobs_mb_t_all_env[i].detach())
                 advantages = rewards_all_env[i] - vals.view(-1).detach()
@@ -162,19 +165,15 @@ class PPO:
 
 def main():
     from traffic_gen import datadir_traffic_generator, random_traffic_generator
-    from tcg.tcg_env import TcgEnv, TcgEnvWithRollback
-    from simulation import Intersection, Vehicle
+    from tcg.tcg_env import TcgEnvWithRollback
+    from simulation import Intersection
     from utility import read_intersection_from_json
 
     # prepare loggings/checkpoints directory
     os.makedirs(configs.log_dir, exist_ok=True)
     os.makedirs(configs.ckpt_dir, exist_ok=True)
 
-    num_vehicles: int = configs.num_vehicles
-    configs.n_j = num_vehicles
-
     intersection: Intersection = read_intersection_from_json(configs.intersection_config)
-    configs.n_m = len(intersection.conflict_zones)
     envs = [TcgEnvWithRollback() for _ in range(configs.num_envs)]
 
     validation_gen = datadir_traffic_generator(intersection, configs.valid_dir)
@@ -183,7 +182,7 @@ def main():
     training_gen = random_traffic_generator(
         intersection,
         num_iter=0, # infinite
-        vehicle_num=num_vehicles,
+        vehicle_num=configs.num_vehicles,
         poisson_parameter_list = [configs.train_density]
     )
 
@@ -194,29 +193,24 @@ def main():
 
     memories = [Memory() for _ in range(configs.num_envs)]
 
-    ppo = PPO(configs.lr, configs.gamma, configs.k_epochs, configs.eps_clip,
-                n_j=configs.n_j,
-                n_m=configs.n_m,
-                num_layers=configs.num_layers,
-                neighbor_pooling_type=configs.neighbor_pooling_type,
-                input_dim=configs.input_dim,
-                hidden_dim=configs.hidden_dim,
-                num_mlp_layers_feature_extract=configs.num_mlp_layers_feature_extract,
-                num_mlp_layers_actor=configs.num_mlp_layers_actor,
-                hidden_dim_actor=configs.hidden_dim_actor,
-                num_mlp_layers_critic=configs.num_mlp_layers_critic,
-                hidden_dim_critic=configs.hidden_dim_critic,
-                init_method=configs.init_method,
-                ckpt_path=configs.ckpt_path,
-            )
+    ppo = PPO(
+        configs.lr, configs.gamma, configs.k_epochs, configs.eps_clip,
+        n_j=configs.num_vehicles,
+        num_layers=configs.num_layers,
+        neighbor_pooling_type=configs.neighbor_pooling_type,
+        input_dim=configs.input_dim,
+        hidden_dim=configs.hidden_dim,
+        num_mlp_layers_feature_extract=configs.num_mlp_layers_feature_extract,
+        num_mlp_layers_actor=configs.num_mlp_layers_actor,
+        hidden_dim_actor=configs.hidden_dim_actor,
+        num_mlp_layers_critic=configs.num_mlp_layers_critic,
+        hidden_dim_critic=configs.hidden_dim_critic,
+        init_method=configs.init_method,
+        ckpt_path=configs.ckpt_path,
+    )
 
     if configs.valid_only:
-        if (configs.sw_valid):
-            valid_result = validate_sliding_window(intersection, valid_data, ppo.policy, configs.sw_group_size, configs.sw_stride).mean()
-            # valid_result = validate_sliding_window(intersection, valid_data, ppo.policy, configs.sw_group_size, configs.sw_stride)
-        else:
-            valid_result = -validate(intersection, valid_data, ppo.policy).mean()
-            # valid_result = -validate(intersection, valid_data, ppo.policy)
+        valid_result = -validate(intersection, valid_data, ppo.policy, configs.group_strat).mean()
         print(f'Validation average delay time: {valid_result:.3f} (sec)')
         return
 
