@@ -50,5 +50,5 @@ python3 src/baseline.py \
 
 ## Special Thanks
 
-* Part of the code are ported from https://github.com/zcaicaros/L2D for implementation of applying RL on solving JSSP
+* Part of the code are ported from https://github.com/zcaicaros/L2D for implementation of applying RL on solving JSSP.
 * Thanks the support from the two supervisors of this research project, Professor Chung-Wei Lin (National Taiwan University) and Professor Muhammed O. Sayin (Bilkent University). 
